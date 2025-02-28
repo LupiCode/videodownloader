@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Video Downloader</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Video Downloader</h1>
+        <form action="/download" method="post" id="download-form">
+            <label for="url">Enter Video URL:</label>
+            <input type="text" id="url" name="url" required><br><br>
+            <label for="audio_only">Download Audio Only:</label>
+            <input type="checkbox" id="audio_only" name="audio_only"><br><br>
+            <button type="submit">Download</button>
+        </form>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById("download-form");
+        const statusDiv = document.getElementById("status");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const formData = new FormData(form);
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/download", true);
+
+            statusDiv.textContent = "Downloading... Please wait."; // Display message during download
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        statusDiv.textContent = "Download completed!"; // Success message
+                    } else {
+                        statusDiv.textContent = "Error occurred. Try again."; // Error message
+                    }
+                }
+            };
+
+            xhr.send(formData);
+        });
+    </script>
+</body>
+</html>
